@@ -1,0 +1,23 @@
+{
+  "name": "inblank/yii2-db-helper",
+  "description": "Yii 2 database helpers",
+  "keywords": ["yii2", "database"],
+  "homepage": "http://www.inblank.ru/",
+  "type": "yii2-extension",
+  "license": "BSD-3-Clause",
+  "authors": [
+    {
+      "name": "Pavel Aleksandrov",
+      "email": "inblank@yandex.ru"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "yiisoft/yii2": "~2.0.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "inblank\\dbhelper\\": "src"
+    }
+  }
+}
