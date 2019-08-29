@@ -19,15 +19,22 @@ class ActiveRecord extends \yii\db\ActiveRecord
     public static function getDb()
     {
         static $db;
-        if (is_null($db)) {
+        if ($db === null) {
             $class = StringHelper::dirname(StringHelper::dirname(static::class)) . '\Module';
             foreach (Yii::$app->getModules() as $module) {
                 if ($module instanceof $class) {
-                    $db = is_string($module->db) ? Yii::$app->get($module->db) : $module->db;
+                    if (is_array($module->db)) {
+                        if (!array_key_exists('class', $module->db)) {
+                            $module->db['class'] = Connection::class;
+                        }
+                        $db = Yii::createObject($module->db);
+                    } else {
+                        $db = is_string($module->db) ? Yii::$app->get($module->db) : $module->db;
+                    }
                     break;
                 }
             }
-            if (is_null($db)) {
+            if ($db === null) {
                 // did not find the module, using the default connection
                 $db = Yii::$app->get('db');
             }
