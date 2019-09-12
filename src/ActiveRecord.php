@@ -48,8 +48,17 @@ class ActiveRecord extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
+        return self::tn('{{%' . Inflector::camel2id(StringHelper::basename(get_called_class()), '_') . '}}');
+    }
+
+    /**
+     * Get full table name for ActiveRecord
+     * @param string $tab table name
+     * @return string
+     * @throws \yii\base\InvalidConfigException
+     */
+    public static function tn($tab) {
         $db = static::getDb();
-        $tab = '{{%' . Inflector::camel2id(StringHelper::basename(get_called_class()), '_') . '}}';
         return $db instanceof Connection ? $db->tableName($tab) : $tab;
     }
 
