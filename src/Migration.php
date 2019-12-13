@@ -28,7 +28,7 @@ class Migration extends \yii\db\Migration
         parent::init();
         switch ($this->getDb()->driverName) {
             case 'mysql':
-                $this->params = 'ENGINE innodb CHARSET utf8 COLLATE utf8_unicode_ci';
+                $this->params = 'ENGINE InnoDB CHARSET utf8 COLLATE utf8_unicode_ci';
                 $this->isMysql = true;
                 break;
         }
@@ -50,14 +50,15 @@ class Migration extends \yii\db\Migration
      * @param array $columns table fields definition
      * @param string $comment table comment
      * @param string $options advanced table creation options
+     * @throws \yii\db\Exception
      */
     public function createTable($table, $columns, $comment = null, $options = null)
     {
-        if (strpos($table, '{{%') != 0) {
+        if (strpos($table, '{{%') !== 0) {
             // giving the table name to the prefix notation
             $table = $this->tn($table);
         }
-        parent::createTable($table, $columns, $this->params
-            . (empty($comment) ? '' : " COMMENT '{$comment}' ") . $options);
+        parent::createTable($table, $columns, $this->params . $options);
+        $this->getDb()->createCommand()->addCommentOnTable($table, $comment)->execute();
     }
 }
