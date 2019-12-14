@@ -8,20 +8,16 @@ namespace inblank\dbhelper;
 class Connection extends \yii\db\Connection
 {
     /**
+     * The scheme used by default.
+     * If not set, then for 'mysql' set to database name, for `pgsql` set to 'public'
+     * @var string
+     */
+    public $defaultScheme;
+    /**
      * Cache full table names
      * @var array
      */
     private $tablesCache = [];
-
-    /**
-     * Getting attribute value from DSN string
-     * @param string $attributeName attribute name
-     * @return string|null if attribute is not found, returns null
-     */
-    public function getDsnAttribute($attributeName)
-    {
-        return preg_match('/' . $attributeName . '=([^;]*)/', $this->dsn, $match) ? $match[1] : null;
-    }
 
     /**
      * Getting the full name of the table with the database name
@@ -33,7 +29,19 @@ class Connection extends \yii\db\Connection
         if (isset($this->tablesCache[$tableName])) {
             return $this->tablesCache[$tableName];
         }
-        $dbName = $this->getDsnAttribute('dbname');
-        return $this->tablesCache[$tableName] = ($dbName ? '{{' . $dbName . '}}.' : '') . $tableName;
+        if (empty($this->defaultScheme)) {
+            $this->defaultScheme = $this->getDriverName() === 'pgsql' ? 'public' : $this->getDsnAttribute('dbname');
+        }
+        return $this->tablesCache[$tableName] = '{{' . $this->defaultScheme . '}}.' . $tableName;
+    }
+
+    /**
+     * Getting attribute value from DSN string
+     * @param string $attributeName attribute name
+     * @return string|null if attribute is not found, returns null
+     */
+    public function getDsnAttribute($attributeName)
+    {
+        return preg_match('/' . $attributeName . '=([^;]*)/', $this->dsn, $match) ? $match[1] : null;
     }
 }

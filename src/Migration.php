@@ -35,16 +35,6 @@ class Migration extends \yii\db\Migration
     }
 
     /**
-     * Getting the full name of the table with the prefix label
-     * @param string $tab table name
-     * @return string
-     */
-    public function tn($tab)
-    {
-        return '{{%' . $tab . '}}';
-    }
-
-    /**
      * Creating a table
      * @param string $table table name
      * @param array $columns table fields definition
@@ -60,5 +50,16 @@ class Migration extends \yii\db\Migration
         }
         parent::createTable($table, $columns, $this->params . $options);
         $this->getDb()->createCommand()->addCommentOnTable($table, $comment)->execute();
+    }
+
+    /**
+     * Getting the full name of the table with the prefix label
+     * @param string $tab table name
+     * @return string
+     */
+    public function tn($tab)
+    {
+        $db = $this->getDb();
+        return $db instanceof Connection ? $db->tableName($tab) : '{{%' . $tab . '}}';
     }
 }
