@@ -62,4 +62,27 @@ class Migration extends \yii\db\Migration
         $db = $this->getDb();
         return $db instanceof Connection ? $db->tableName($tab) : '{{%' . $tab . '}}';
     }
+    
+    /**
+     * Creates indexes by list
+     * @param string $table table the name of the table for which we create indexes
+     * @param array $list list field names and uniqueness for indexes. Each item define one index
+     *  Field names in the list key, uniqueness in value. If given simply by a string,
+     *  then the index is not unique. For a composite index, field names are separated by commas.
+     *  Examples:
+     *      ['field1', 'field2'=>1, 'field3,field', 'field4,field5'=>1]
+     */
+    public function createIndexByList($table, $list)
+    {
+        foreach ($list as $fields => $unique) {
+            if (is_numeric($fields)) {
+                // if set only fields, then not unique index
+                $fields = $unique;
+                $unique = 0;
+            }
+            $fields = explode(',', $fields);
+            $fullTableName = strpos($table, '{{%') === 0 ? $table : $this->tn($table);
+            $this->createIndex($table . '_' . implode('_', $fields), $fullTableName, $fields, $unique);
+        }
+    }
 }
