@@ -82,7 +82,7 @@ class Migration extends \yii\db\Migration
             }
             $fields = explode(',', $fields);
             $fullTableName = strpos($table, '{{%') === 0 ? $table : $this->tn($table);
-            $this->createIndex($table . '_' . implode('_', $fields), $fullTableName, $fields, $unique);
+            $this->createIndex($table . '_' . implode('_', $fields), $fullTableName, $fields, (bool)$unique);
         }
     }
 }
